@@ -1,0 +1,13 @@
+{% extends 'main/layout/layout.html' %}
+
+{% block title %}My Account{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow rounded-lg p-6 max-w-3xl mx-auto">
+    <h2 class="text-2xl font-bold mb-4">My Account</h2>
+    <p>Welcome, {{ user.username }}!</p>
+    <p>Email: {{ user.email }}</p>
+    <p>First name: {{ user.first_name }}</p>
+    <p>Last name: {{ user.last_name }}</p>
+</div>
+{% endblock %}

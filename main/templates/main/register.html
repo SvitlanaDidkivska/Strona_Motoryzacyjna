@@ -1,0 +1,17 @@
+{% extends 'main/layout/layout.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
+    <h2 class="text-2xl font-bold mb-6 text-center">Create an Account</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Register</button>
+    </form>
+    <p class="mt-4 text-center text-sm text-gray-600">
+        Already have an account? <a href="{% url 'main:login' %}" class="text-blue-600 hover:underline">Log in</a>
+    </p>
+</div>
+{% endblock %}

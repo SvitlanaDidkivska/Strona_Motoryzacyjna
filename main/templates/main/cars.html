@@ -1,0 +1,45 @@
+{% extends 'main/layout/layout.html' %}
+
+{% block title %}CarHub - Catalog{% endblock %}
+
+{% block content %}
+<div class="py-12 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-extrabold text-gray-900">Car Catalog</h2>
+
+        <!-- Filter Form -->
+        <form method="get" class="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <input type="text" name="make" placeholder="Make" value="{{ filter_make }}" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input type="text" name="model" placeholder="Model" value="{{ filter_model }}" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input type="number" name="year" placeholder="Year" value="{{ filter_year }}" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input type="text" name="color" placeholder="Color" value="{{ filter_color }}" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <select name="drive_wheel" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Drive Wheel</option>
+                <option value="fwd" {% if filter_drive_wheel == 'fwd' %}selected{% endif %}>Front Wheel Drive</option>
+                <option value="rwd" {% if filter_drive_wheel == 'rwd' %}selected{% endif %}>Rear Wheel Drive</option>
+                <option value="4wd" {% if filter_drive_wheel == '4wd' %}selected{% endif %}>4 Wheel Drive</option>
+                <option value="awd" {% if filter_drive_wheel == 'awd' %}selected{% endif %}>All Wheel Drive</option>
+            </select>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Filter</button>
+        </form>
+
+        <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {% for car in cars %}
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-6">
+                    <img src="{{ car.image.url }}" alt="{{ car.name }}" class="w-full h-48 object-cover rounded-md">
+                    <h3 class="mt-4 text-lg font-medium text-gray-900">{{ car.name }}</h3>
+                    <p class="mt-1 text-sm text-gray-500">Year: {{ car.year }}</p>
+                    <p class="mt-1 text-sm text-gray-500">Color: {{ car.color }}</p>
+                    <p class="mt-1 text-sm text-gray-500">Price: {{ car.price }}</p>
+                    <p class="mt-2 text-sm text-gray-500">Drive Wheel: {{ car.drive_wheel }}</p>
+                    <a href="#" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                        View Details
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
