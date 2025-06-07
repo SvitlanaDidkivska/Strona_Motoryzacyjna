@@ -1,0 +1,176 @@
+{% extends 'main/layout/layout.html' %}
+{% load static %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="py-8 fade-in">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Post Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ post.title }}</h1>
+                {% if user == post.author %}
+                <div class="flex space-x-3">
+                    <a href="{% url 'forum:edit_post' post.id %}" class="btn-hover inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all">
+                        <i class="fas fa-edit mr-2"></i>
+                        Edit
+                    </a>
+                    <a href="{% url 'forum:delete_post' post.id %}" class="btn-hover inline-flex items-center px-4 py-2 border border-red-300 dark:border-red-700 shadow-sm text-sm font-medium rounded-md text-red-700 dark:text-red-400 bg-white dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900 transition-all">
+                        <i class="fas fa-trash mr-2"></i>
+                        Delete
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            <div class="mt-4 flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                <span class="flex items-center">
+                    <i class="fas fa-user mr-2"></i>
+                    <a href="{% url 'main:user_profile' post.author.username %}" class="text-blue-600 dark:text-blue-400 hover:underline">
+                        {{ post.author.username }}
+                    </a>
+                    {% if user.is_authenticated and user != post.author %}
+                    <button id="watch-btn" data-username="{{ post.author.username }}" class="ml-2 px-2 py-1 text-xs rounded bg-blue-600 text-white hover:bg-blue-700 transition">
+                        {% if is_watching %}
+                            Unwatch
+                        {% else %}
+                            Watch
+                        {% endif %}
+                    </button>
+                    {% endif %}
+                </span>
+                <span class="flex items-center">
+                    <i class="fas fa-calendar mr-2"></i>
+                    {{ post.created_at|date:"M d, Y" }}
+                </span>
+                {% if post.category %}
+                <a href="{% url 'forum:category_detail' post.category.id %}" class="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+                    <i class="fas fa-folder mr-2"></i>
+                    {{ post.category.name }}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Post Content -->
+        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden hover-scale">
+            <div class="p-6">
+            <div class="prose dark:prose-invert max-w-none">
+                {{ post.content|safe }}
+            </div>
+            {% if post.image %}
+            <div class="mt-4">
+                <img src="{{ post.image.url }}" alt="Post Image" class="max-w-full rounded shadow-md" />
+            </div>
+            {% endif %}
+
+            <!-- Reactions -->
+            <div class="mt-4 flex space-x-2">
+                {% for reaction_type, emoji in post.reactions.model.REACTION_TYPES %}
+                <button class="reaction-btn px-2 py-1 rounded-md border border-gray-300 dark:border-gray-600 text-lg"
+                        data-post-id="{{ post.id }}"
+                        data-reaction-type="{{ reaction_type }}"
+                        title="{{ reaction_type|capfirst }}">
+                    {{ emoji }}
+                </button>
+                {% endfor %}
+            </div>
+
+            <!-- User Reputation and Badges -->
+            <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                <span>Reputation: {{ post.author.reputation.points|default:"0" }}</span>
+                <span class="ml-4">
+                    Badges:
+                    {% for badge in post.author.badges.all %}
+                        <span class="badge px-2 py-1 bg-blue-200 dark:bg-blue-700 rounded text-xs font-semibold mr-1">
+                            {{ badge.get_badge_type_display }}
+                        </span>
+                    {% empty %}
+                        None
+                    {% endfor %}
+                </span>
+            </div>
+
+            </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Comments</h2>
+
+            {% if user.is_authenticated %}
+            <!-- Comment Form -->
+            <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden mb-8">
+                <form method="post" class="p-6" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ comment_form.media }}
+                    {{ comment_form.as_p }}
+                    <button type="submit" class="btn-hover inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-all">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        Post Comment
+                    </button>
+                </form>
+            </div>
+            {% else %}
+            <p>You must <a href="{% url 'main:login' %}">log in</a> to post a comment.</p>
+            {% endif %}
+
+            <!-- Comments List -->
+            <div class="space-y-6">
+                {% for comment in comments %}
+                <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden slide-in-right">
+                    <div class="p-6">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="flex-shrink-0">
+                                    <a href="{% url 'main:user_profile' comment.author.username %}" class="block">
+                                        <div class="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                                            <span class="text-blue-600 dark:text-blue-400 font-medium text-lg">{{ comment.author.username|first|upper }}</span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div>
+                                    <a href="{% url 'main:user_profile' comment.author.username %}" class="font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                        {{ comment.author.username }}
+                                    </a>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">{{ comment.created_at|date:"M d, Y" }}</div>
+                                </div>
+                            </div>
+                            {% if user == comment.author %}
+                            <div class="flex space-x-2">
+                                <a href="{% url 'forum:edit_comment' comment.id %}" class="text-gray-400 hover:text-blue-500 transition-colors">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'forum:delete_comment' comment.id %}" class="text-gray-400 hover:text-red-500 transition-colors">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="mt-4 text-gray-700 dark:text-gray-300">
+                            {{ comment.content|safe }}
+                        </div>
+
+                        <!-- Commenter Reputation and Badges -->
+                        <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                            Reputation: {{ comment.author.reputation.points|default:"0" }} |
+                            Badges:
+                            {% for badge in comment.author.badges.all %}
+                                <span class="badge px-1 py-0.5 bg-blue-200 dark:bg-blue-700 rounded text-xs font-semibold mr-1">
+                                    {{ badge.get_badge_type_display }}
+                                </span>
+                            {% empty %}
+                                None
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-gray-500 dark:text-gray-400">No comments yet. Be the first to comment!</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'forum/js/post_detail.js' %}"></script>
+{% endblock %}

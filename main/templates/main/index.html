@@ -3,7 +3,7 @@
 {% block title %}CarHub - Home{% endblock %}
 
 {% block content %}
-<div class="relative bg-white">
+<div class="relative bg-gray-900">
     <!-- Hero section -->
     <div class="relative bg-gray-900 h-[500px]">
         <div class="absolute inset-0 overflow-hidden">
@@ -27,9 +27,9 @@
 
     <!-- Car of the Week section -->
     {% if car_of_the_week %}
-    <div class="py-16 bg-white">
+    <div class="py-16 bg-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl text-center">Car of the Week</h2>
+            <h2 class="text-3xl font-extrabold text-white sm:text-4xl text-center">Car of the Week</h2>
             <div class="mt-8 flex flex-col md:flex-row items-center md:items-start md:space-x-8">
                 <div class="w-full md:w-1/2">
                     {% if car_of_the_week.image %}
@@ -39,9 +39,9 @@
                     {% endif %}
                 </div>
                 <div class="w-full md:w-1/2 mt-6 md:mt-0">
-                    <h3 class="text-2xl font-semibold text-gray-900">{{ car_of_the_week.year }} {{ car_of_the_week.make }} {{ car_of_the_week.model }}</h3>
-                    <p class="mt-2 text-gray-700">{{ car_of_the_week.description }}</p>
-                    <ul class="mt-4 text-gray-600">
+                    <h3 class="text-2xl font-semibold text-white">{{ car_of_the_week.year }} {{ car_of_the_week.make }} {{ car_of_the_week.model }}</h3>
+                    <p class="mt-2 text-gray-300">{{ car_of_the_week.description }}</p>
+                    <ul class="mt-4 text-gray-400">
                         <li><strong>Price:</strong> ${{ car_of_the_week.price }}</li>
                         <li><strong>Color:</strong> {{ car_of_the_week.color }}</li>
                         <li><strong>Drive Wheel:</strong> {{ car_of_the_week.get_drive_wheel_display }}</li>
@@ -53,43 +53,43 @@
     {% endif %}
 
     <!-- Features section -->
-    <div class="py-16 bg-gray-50 overflow-hidden">
+    <div class="py-16 bg-gray-800 overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 space-y-8 sm:px-6 lg:px-8">
             <div class="text-center">
-                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">Why Choose CarHub?</h2>
-                <p class="mt-4 max-w-3xl mx-auto text-xl text-gray-500">Everything you need to explore and discuss cars in one place.</p>
+                <h2 class="text-3xl font-extrabold text-white sm:text-4xl">Why Choose CarHub?</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-xl text-gray-300">Everything you need to explore and discuss cars in one place.</p>
             </div>
 
             <div class="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 <!-- Feature 1 -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="bg-gray-700 overflow-hidden shadow rounded-lg">
                     <div class="px-4 py-5 sm:p-6">
                         <div class="text-center">
-                            <i class="fas fa-car text-4xl text-blue-500"></i>
-                            <h3 class="mt-2 text-lg font-medium text-gray-900">Extensive Catalog</h3>
-                            <p class="mt-1 text-sm text-gray-500">Browse through our comprehensive collection of cars.</p>
+                            <i class="fas fa-car text-4xl text-blue-400"></i>
+                            <h3 class="mt-2 text-lg font-medium text-white">Extensive Catalog</h3>
+                            <p class="mt-1 text-sm text-gray-300">Browse through our comprehensive collection of cars.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Feature 2 -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="bg-gray-700 overflow-hidden shadow rounded-lg">
                     <div class="px-4 py-5 sm:p-6">
                         <div class="text-center">
-                            <i class="fas fa-comments text-4xl text-blue-500"></i>
-                            <h3 class="mt-2 text-lg font-medium text-gray-900">Active Community</h3>
-                            <p class="mt-1 text-sm text-gray-500">Connect with other car enthusiasts in our forum.</p>
+                            <i class="fas fa-comments text-4xl text-blue-400"></i>
+                            <h3 class="mt-2 text-lg font-medium text-white">Active Community</h3>
+                            <p class="mt-1 text-sm text-gray-300">Connect with other car enthusiasts in our forum.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Feature 3 -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="bg-gray-700 overflow-hidden shadow rounded-lg">
                     <div class="px-4 py-5 sm:p-6">
                         <div class="text-center">
-                            <i class="fas fa-info-circle text-4xl text-blue-500"></i>
-                            <h3 class="mt-2 text-lg font-medium text-gray-900">Detailed Information</h3>
-                            <p class="mt-1 text-sm text-gray-500">Get comprehensive details about each vehicle.</p>
+                            <i class="fas fa-info-circle text-4xl text-blue-400"></i>
+                            <h3 class="mt-2 text-lg font-medium text-white">Detailed Information</h3>
+                            <p class="mt-1 text-sm text-gray-300">Get comprehensive details about each vehicle.</p>
                         </div>
                     </div>
                 </div>
@@ -97,4 +97,63 @@
         </div>
     </div>
 </div>
+
+<!-- Newsletter Section at bottom -->
+<div class="bg-gray-900 py-12 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-extrabold text-white mb-4">Subscribe to our Newsletter</h2>
+        <form method="POST" action="{% url 'main:newsletter_subscribe' %}" class="max-w-md mx-auto">
+            {% csrf_token %}
+            <input type="email" name="email" placeholder="Enter your email" required
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <button type="submit" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Subscribe</button>
+        </form>
+    </div>
+</div>
+
+<!-- Newsletter Popup -->
+<div id="newsletter-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full relative">
+        <button id="popup-close" class="absolute top-2 right-2 text-gray-600 hover:text-gray-900 text-xl font-bold">&times;</button>
+        <h3 class="text-2xl font-bold mb-4">Subscribe to our Newsletter</h3>
+        <form method="POST" action="{% url 'main:newsletter_subscribe' %}">
+            {% csrf_token %}
+            <input type="email" name="email" placeholder="Enter your email" required
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <button type="submit" class="mt-4 w-full px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Subscribe</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const popup = document.getElementById('newsletter-popup');
+        const closeBtn = document.getElementById('popup-close');
+        const lastShown = localStorage.getItem('newsletterPopupLastShown');
+        const now = new Date().getTime();
+        const sevenDays = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+
+        // Show popup only if it hasn't been shown in the last 7 days
+        if (!lastShown || (now - parseInt(lastShown)) > sevenDays) {
+            setTimeout(function () {
+                popup.classList.remove('hidden');
+            }, 3000);
+        }
+
+        // Close popup and save timestamp
+        closeBtn.addEventListener('click', function () {
+            popup.classList.add('hidden');
+            localStorage.setItem('newsletterPopupLastShown', now.toString());
+        });
+
+        // Save timestamp when subscribing
+        const forms = document.querySelectorAll('form[action*="newsletter_subscribe"]');
+        forms.forEach(form => {
+            form.addEventListener('submit', function() {
+                localStorage.setItem('newsletterPopupLastShown', now.toString());
+            });
+        });
+    });
+</script>
+
 {% endblock %}

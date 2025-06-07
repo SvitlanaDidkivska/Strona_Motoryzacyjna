@@ -1,0 +1,174 @@
+{% extends 'main/layout/layout.html' %}
+
+{% block title %}{{ car.name }} - Details{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-8 px-4">
+    <div class="bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+        <div class="flex flex-col md:flex-row">
+            <!-- Image Section -->
+            <div class="md:w-1/2 p-6">
+                {% if car.image %}
+                    <img src="{{ car.image.url }}" alt="{{ car.name }}" class="w-full h-auto rounded-lg shadow-lg object-cover">
+                {% else %}
+                    <div class="w-full h-64 bg-gray-700 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-car text-6xl text-gray-500"></i>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Basic Info Section -->
+            <div class="md:w-1/2 p-6">
+                <h2 class="text-3xl font-bold text-white mb-4">{{ car.name }}</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-gray-400">Make:</div>
+                    <div class="text-gray-200">{{ car.make }}</div>
+                    <div class="text-gray-400">Model:</div>
+                    <div class="text-gray-200">{{ car.model }}</div>
+                    <div class="text-gray-400">Year:</div>
+                    <div class="text-gray-200">{{ car.year }}</div>
+                    <div class="text-gray-400">Price:</div>
+                    <div class="text-gray-200">${{ car.price|floatformat:2 }}</div>
+                </div>
+
+                {% if user.is_authenticated %}
+                <div class="mt-6">
+                    <form method="post" action="{% url 'main:car_detail' car.id %}">
+                        {% csrf_token %}
+                        {% if is_favorite %}
+                        <button type="submit" name="favorite_action" value="remove" 
+                                class="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-200">
+                            <i class="fas fa-heart-broken mr-2"></i>Remove from Favorites
+                        </button>
+                        {% else %}
+                        <button type="submit" name="favorite_action" value="add" 
+                                class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200">
+                            <i class="fas fa-heart mr-2"></i>Add to Favorites
+                        </button>
+                        {% endif %}
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Technical Specifications -->
+        <div class="p-6 border-t border-gray-700">
+            <h3 class="text-2xl font-semibold text-white mb-4">Technical Specifications</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center bg-gray-700 p-3 rounded-lg">
+                        <span class="text-gray-400">Vehicle Type:</span>
+                        <span class="text-gray-200">{{ car.vehicle_type }}</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-700 p-3 rounded-lg">
+                        <span class="text-gray-400">Engine:</span>
+                        <span class="text-gray-200">{{ car.engine }}</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-700 p-3 rounded-lg">
+                        <span class="text-gray-400">Fuel Type:</span>
+                        <span class="text-gray-200">{{ car.fuel_type }}</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-700 p-3 rounded-lg">
+                        <span class="text-gray-400">Transmission:</span>
+                        <span class="text-gray-200">{{ car.transmission }}</span>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center bg-gray-700 p-3 rounded-lg">
+                        <span class="text-gray-400">Drive Wheel:</span>
+                        <span class="text-gray-200">{{ car.get_drive_wheel_display }}</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-700 p-3 rounded-lg">
+                        <span class="text-gray-400">Doors:</span>
+                        <span class="text-gray-200">{{ car.doors }}</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-700 p-3 rounded-lg">
+                        <span class="text-gray-400">Seats:</span>
+                        <span class="text-gray-200">{{ car.seats }}</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-700 p-3 rounded-lg">
+                        <span class="text-gray-400">Safety Rating:</span>
+                        <span class="text-gray-200">{{ car.safety_rating|default:"N/A" }}/5.0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="p-6 border-t border-gray-700">
+            <h3 class="text-2xl font-semibold text-white mb-4">Additional Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center bg-gray-700 p-3 rounded-lg">
+                        <span class="text-gray-400">Color:</span>
+                        <span class="text-gray-200">{{ car.color }}</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-700 p-3 rounded-lg">
+                        <span class="text-gray-400">Manufacturer Code:</span>
+                        <span class="text-gray-200">{{ car.manufacturer_code }}</span>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center bg-gray-700 p-3 rounded-lg">
+                        <span class="text-gray-400">Plant Country:</span>
+                        <span class="text-gray-200">{{ car.plant_country }}</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-700 p-3 rounded-lg">
+                        <span class="text-gray-400">Added:</span>
+                        <span class="text-gray-200">{{ car.created_at|date:"M d, Y" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="p-6 border-t border-gray-700">
+            <h3 class="text-2xl font-semibold text-white mb-4">Description</h3>
+            <p class="text-gray-300 leading-relaxed">{{ car.description }}</p>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="p-6 border-t border-gray-700">
+            <h3 class="text-2xl font-semibold text-white mb-4">Reviews</h3>
+            {% if reviews %}
+                <div class="space-y-4">
+                    {% for review in reviews %}
+                    <div class="bg-gray-700 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center">
+                                <span class="font-semibold text-white">{{ review.user.username }}</span>
+                                <span class="text-sm text-gray-400 ml-2">{{ review.created_at|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-300">{{ review.content }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-400">No reviews yet. Be the first to review this car!</p>
+            {% endif %}
+        </div>
+
+        <!-- Add Review Form -->
+        {% if user.is_authenticated %}
+        <div class="p-6 border-t border-gray-700">
+            <h3 class="text-xl font-semibold text-white mb-4">Add a Review</h3>
+            <form method="post" action="{% url 'main:car_detail' car.id %}" class="space-y-4">
+                {% csrf_token %}
+                <div class="w-full">
+                    {{ form.content }}
+                </div>
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200">
+                    Submit Review
+                </button>
+            </form>
+        </div>
+        {% else %}
+        <div class="p-6 border-t border-gray-700">
+            <p class="text-gray-400">Please <a href="{% url 'main:login' %}" class="text-blue-400 hover:text-blue-300">log in</a> to add a review.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -31,6 +31,6 @@ def get_links():
     },{
         'name': 'Forum',
         'href': '/forum',
-        'icon': 'fa-comment',
+        'icon': 'fa-comment', #look for your icon here https://fontawesome.com/search?ic=free
     }]
     

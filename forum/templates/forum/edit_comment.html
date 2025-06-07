@@ -1,0 +1,38 @@
+{% extends 'main/layout/layout.html' %}
+{% load static %}
+
+{% block title %}Edit Comment{% endblock %}
+
+{% block content %}
+<div class="py-8">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Edit Comment</h1>
+            <p class="mt-2 text-gray-600">Editing comment on post: <a href="{% url 'forum:post_detail' comment.post.id %}" class="text-blue-600 hover:text-blue-700">{{ comment.post.title }}</a></p>
+        </div>
+
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+            <form method="post" class="p-6 space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label for="id_content" class="block text-sm font-medium text-gray-700">Comment</label>
+                    {{ form.content }}
+                    {% if form.content.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.content.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <a href="{% url 'forum:post_detail' comment.post.id %}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Cancel
+                    </a>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

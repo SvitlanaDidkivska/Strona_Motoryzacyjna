@@ -1,45 +1,177 @@
 {% extends 'main/layout/layout.html' %}
+{% load car_filters humanize %}
 
 {% block title %}CarHub - Catalog{% endblock %}
 
 {% block content %}
-<div class="py-12 bg-gray-50">
+<div class="py-12 bg-gray-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-extrabold text-gray-900">Car Catalog</h2>
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-3xl font-extrabold text-white">Car Catalog</h2>
+            <span class="text-gray-400">{{ total_cars }} vehicles found</span>
+        </div>
 
         <!-- Filter Form -->
-        <form method="get" class="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            <input type="text" name="make" placeholder="Make" value="{{ filter_make }}" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            <input type="text" name="model" placeholder="Model" value="{{ filter_model }}" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            <input type="number" name="year" placeholder="Year" value="{{ filter_year }}" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            <input type="text" name="color" placeholder="Color" value="{{ filter_color }}" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            <select name="drive_wheel" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">Drive Wheel</option>
-                <option value="fwd" {% if filter_drive_wheel == 'fwd' %}selected{% endif %}>Front Wheel Drive</option>
-                <option value="rwd" {% if filter_drive_wheel == 'rwd' %}selected{% endif %}>Rear Wheel Drive</option>
-                <option value="4wd" {% if filter_drive_wheel == '4wd' %}selected{% endif %}>4 Wheel Drive</option>
-                <option value="awd" {% if filter_drive_wheel == 'awd' %}selected{% endif %}>All Wheel Drive</option>
-            </select>
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Filter</button>
-        </form>
+        <div class="bg-gray-700 rounded-lg p-6 mb-8">
+            <form method="get" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <!-- Basic Filters -->
+                    <select name="make" class="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Makes</option>
+                        {% for make in cars.paginator.object_list|unique:"make" %}
+                        <option value="{{ make }}" {% if filter_make == make %}selected{% endif %}>{{ make }}</option>
+                        {% endfor %}
+                    </select>
 
-        <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <input type="text" name="model" placeholder="Model" value="{{ filter_model }}" 
+                           class="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+                    <select name="year" class="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Years</option>
+                        {% for year in cars.paginator.object_list|unique:"year" %}
+                        <option value="{{ year }}" {% if filter_year == year|stringformat:"i" %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <select name="vehicle_type" class="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Vehicle Types</option>
+                        {% for type in cars.paginator.object_list|unique:"vehicle_type" %}
+                        {% if type %}
+                        <option value="{{ type }}" {% if filter_vehicle_type == type %}selected{% endif %}>{{ type }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <!-- Additional Filters -->
+                    <select name="fuel_type" class="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Fuel Types</option>
+                        {% for type in cars.paginator.object_list|unique:"fuel_type" %}
+                        {% if type %}
+                        <option value="{{ type }}" {% if filter_fuel_type == type %}selected{% endif %}>{{ type }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+
+                    <select name="transmission" class="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Transmissions</option>
+                        {% for trans in cars.paginator.object_list|unique:"transmission" %}
+                        {% if trans %}
+                        <option value="{{ trans }}" {% if filter_transmission == trans %}selected{% endif %}>{{ trans }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+
+                    <select name="drive_wheel" class="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Drive Types</option>
+                        <option value="fwd" {% if filter_drive_wheel == 'fwd' %}selected{% endif %}>Front Wheel Drive</option>
+                        <option value="rwd" {% if filter_drive_wheel == 'rwd' %}selected{% endif %}>Rear Wheel Drive</option>
+                        <option value="4wd" {% if filter_drive_wheel == '4wd' %}selected{% endif %}>4 Wheel Drive</option>
+                        <option value="awd" {% if filter_drive_wheel == 'awd' %}selected{% endif %}>All Wheel Drive</option>
+                    </select>
+
+                    <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200">
+                        <i class="fas fa-filter mr-2"></i>Apply Filters
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Car Grid -->
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {% for car in cars %}
-            <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="bg-gray-700 overflow-hidden shadow-lg rounded-lg transition-transform duration-200 hover:-translate-y-1">
+                <div class="relative">
+                    <div class="w-full h-48 overflow-hidden">
+                        {% if car.image %}
+                            <img src="{{ car.image.url }}" alt="{{ car.name }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <img src="{{ car|car_placeholder }}" alt="{{ car.name }}" class="w-full h-full object-cover">
+                        {% endif %}
+                    </div>
+                    <div class="absolute top-4 right-4">
+                        {% if car.safety_rating %}
+                        <span class="px-2 py-1 bg-green-600 text-white text-sm rounded-md">
+                            <i class="fas fa-shield-alt mr-1"></i>{{ car.safety_rating }}/5
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+
                 <div class="p-6">
-                    <img src="{{ car.image.url }}" alt="{{ car.name }}" class="w-full h-48 object-cover rounded-md">
-                    <h3 class="mt-4 text-lg font-medium text-gray-900">{{ car.name }}</h3>
-                    <p class="mt-1 text-sm text-gray-500">Year: {{ car.year }}</p>
-                    <p class="mt-1 text-sm text-gray-500">Color: {{ car.color }}</p>
-                    <p class="mt-1 text-sm text-gray-500">Price: {{ car.price }}</p>
-                    <p class="mt-2 text-sm text-gray-500">Drive Wheel: {{ car.drive_wheel }}</p>
-                    <a href="#" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                        View Details
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-lg font-medium text-white">{{ car.name }}</h3>
+                            <p class="text-sm text-gray-400">{{ car.year }} {{ car.make }}</p>
+                        </div>
+                        <span class="text-lg font-bold text-blue-400">${{ car.price|floatformat:0|intcomma }}</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="flex items-center text-sm text-gray-300">
+                            <i class="fas fa-car-side w-5 text-gray-400"></i>
+                            <span class="truncate">{{ car.vehicle_type|default:"Not specified"|title }}</span>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-300">
+                            <i class="fas {{ car.fuel_type|get_fuel_type_icon }} w-5 text-gray-400"></i>
+                            <span class="truncate">{{ car.fuel_type|default:"Not specified"|title }}</span>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-300">
+                            <i class="fas {{ car.transmission|get_transmission_icon }} w-5 text-gray-400"></i>
+                            <span class="truncate">{{ car.transmission|default:"Not specified"|title }}</span>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-300">
+                            <i class="fas {{ car.drive_wheel|get_drive_wheel_icon }} w-5 text-gray-400"></i>
+                            <span class="truncate">{{ car.get_drive_wheel_display }}</span>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'main:car_detail' car.id %}" 
+                       class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200">
+                        <i class="fas fa-info-circle mr-2"></i>View Details
                     </a>
                 </div>
             </div>
+            {% empty %}
+            <div class="col-span-full text-center py-12">
+                <i class="fas fa-car-crash text-4xl text-gray-600 mb-4"></i>
+                <p class="text-gray-400">No cars found matching your criteria.</p>
+            </div>
             {% endfor %}
         </div>
+
+        <!-- Pagination -->
+        {% if page_obj.paginator.num_pages > 1 %}
+        <div class="mt-8 flex justify-center">
+            <nav class="inline-flex rounded-md shadow">
+                {% if page_obj.has_previous %}
+                <a href="?{% if filter_make %}make={{ filter_make }}&{% endif %}{% if filter_model %}model={{ filter_model }}&{% endif %}{% if filter_year %}year={{ filter_year }}&{% endif %}{% if filter_vehicle_type %}vehicle_type={{ filter_vehicle_type }}&{% endif %}{% if filter_fuel_type %}fuel_type={{ filter_fuel_type }}&{% endif %}{% if filter_transmission %}transmission={{ filter_transmission }}&{% endif %}{% if filter_drive_wheel %}drive_wheel={{ filter_drive_wheel }}&{% endif %}page={{ page_obj.previous_page_number }}" 
+                   class="px-4 py-2 border border-gray-600 bg-gray-700 text-white hover:bg-gray-600 transition-colors duration-200">
+                    <i class="fas fa-chevron-left mr-1"></i>Previous
+                </a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <span class="px-4 py-2 border border-blue-600 bg-blue-600 text-white">{{ num }}</span>
+                    {% else %}
+                    <a href="?{% if filter_make %}make={{ filter_make }}&{% endif %}{% if filter_model %}model={{ filter_model }}&{% endif %}{% if filter_year %}year={{ filter_year }}&{% endif %}{% if filter_vehicle_type %}vehicle_type={{ filter_vehicle_type }}&{% endif %}{% if filter_fuel_type %}fuel_type={{ filter_fuel_type }}&{% endif %}{% if filter_transmission %}transmission={{ filter_transmission }}&{% endif %}{% if filter_drive_wheel %}drive_wheel={{ filter_drive_wheel }}&{% endif %}page={{ num }}" 
+                       class="px-4 py-2 border border-gray-600 bg-gray-700 text-white hover:bg-gray-600 transition-colors duration-200">
+                        {{ num }}
+                    </a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <a href="?{% if filter_make %}make={{ filter_make }}&{% endif %}{% if filter_model %}model={{ filter_model }}&{% endif %}{% if filter_year %}year={{ filter_year }}&{% endif %}{% if filter_vehicle_type %}vehicle_type={{ filter_vehicle_type }}&{% endif %}{% if filter_fuel_type %}fuel_type={{ filter_fuel_type }}&{% endif %}{% if filter_transmission %}transmission={{ filter_transmission }}&{% endif %}{% if filter_drive_wheel %}drive_wheel={{ filter_drive_wheel }}&{% endif %}page={{ page_obj.next_page_number }}" 
+                   class="px-4 py-2 border border-gray-600 bg-gray-700 text-white hover:bg-gray-600 transition-colors duration-200">
+                    Next<i class="fas fa-chevron-right ml-1"></i>
+                </a>
+                {% endif %}
+            </nav>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

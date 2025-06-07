@@ -1,0 +1,95 @@
+/* Fade in animation */
+.fade-in {
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scale animation for cards */
+.hover-scale {
+    transition: transform 0.3s ease-in-out;
+}
+
+.hover-scale:hover {
+    transform: scale(1.02);
+}
+
+/* Smooth transitions */
+.transition-all {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Pulse animation for notifications or highlights */
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Slide in from right with staggered delay */
+.slide-in-right {
+    animation: slideInRight 0.5s ease-out backwards;
+}
+
+.slide-in-right:nth-child(1) { animation-delay: 0ms; }
+.slide-in-right:nth-child(2) { animation-delay: 100ms; }
+.slide-in-right:nth-child(3) { animation-delay: 200ms; }
+.slide-in-right:nth-child(4) { animation-delay: 300ms; }
+.slide-in-right:nth-child(5) { animation-delay: 400ms; }
+.slide-in-right:nth-child(n+6) { animation-delay: 500ms; }
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Button hover effect */
+.btn-hover {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn-hover:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: currentColor;
+    opacity: 0.1;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
+
+.btn-hover:hover:after {
+    transform: scaleX(1);
+    transform-origin: left;
+}

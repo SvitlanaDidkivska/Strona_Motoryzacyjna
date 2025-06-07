@@ -1,0 +1,214 @@
+{% extends 'main/layout/layout.html' %}
+{% load static %}
+
+{% block title %}{{ profile_user.username }}'s Profile{% endblock %}
+
+{% block content %}
+<div class="py-8 fade-in">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Profile Card -->
+        <div class="bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+            <!-- Profile Header -->
+            <div class="p-6 sm:p-8 border-b border-gray-700">
+                <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                    {% if profile_user.userprofile.profile_picture %}
+                    <img src="{{ profile_user.userprofile.profile_picture.url }}" alt="{{ profile_user.username }}'s profile picture" class="h-32 w-32 rounded-full object-cover ring-4 ring-blue-500">
+                    {% else %}
+                    <div class="h-32 w-32 rounded-full bg-gray-700 flex items-center justify-center text-5xl font-bold text-gray-400 ring-4 ring-blue-500">
+                        {{ profile_user.username|first|upper }}
+                    </div>
+                    {% endif %}
+                    <div class="text-center sm:text-left flex-grow">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <h1 class="text-3xl font-bold text-white">{{ profile_user.username }}</h1>
+                                {% if profile_user.first_name or profile_user.last_name %}
+                                <p class="text-gray-400 text-lg">{{ profile_user.first_name }} {{ profile_user.last_name }}</p>
+                                {% endif %}
+                                <p class="text-gray-500 mt-1">Joined {{ profile_user.userprofile.joined_date|date:"F Y" }}</p>
+                            </div>
+                            {% if user.is_authenticated and user != profile_user %}
+                            <button id="watch-btn" data-username="{{ profile_user.username }}" class="mt-4 sm:mt-0 px-6 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200 flex items-center space-x-2">
+                                <i class="fas {% if is_watching %}fa-user-minus{% else %}fa-user-plus{% endif %}"></i>
+                                <span>{% if is_watching %}Unwatch{% else %}Watch{% endif %}</span>
+                            </button>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Stats -->
+                        <div class="mt-4 flex flex-wrap gap-4">
+                            <div class="bg-gray-700 rounded-lg px-4 py-2">
+                                <div class="text-sm text-gray-400">Reputation</div>
+                                <div class="text-xl font-bold text-blue-400">
+                                    {{ profile_user.reputation.points|default:"0" }}
+                                </div>
+                            </div>
+                            <div class="bg-gray-700 rounded-lg px-4 py-2 flex-grow">
+                                <div class="flex justify-between items-center">
+                                    <div class="text-sm text-gray-400">Badges</div>
+                                    <a href="{% url 'forum:badge_list' %}" class="text-xs text-blue-400 hover:text-blue-300">View All Badges</a>
+                                </div>
+                                <div class="flex flex-wrap gap-2 mt-1">
+                                    {% for badge in profile_user.badges.all %}
+                                        <span class="px-3 py-1 rounded-full text-sm font-medium
+                                            {% if badge.badge_type == 'newcomer' %}bg-gray-600 text-gray-200
+                                            {% elif badge.badge_type == 'regular' %}bg-blue-600 text-blue-100
+                                            {% elif badge.badge_type == 'contributor' %}bg-green-600 text-green-100
+                                            {% elif badge.badge_type == 'expert' %}bg-purple-600 text-purple-100
+                                            {% elif badge.badge_type == 'moderator' %}bg-yellow-600 text-yellow-100
+                                            {% endif %}">
+                                            {{ badge.get_badge_type_display }}
+                                        </span>
+                                    {% empty %}
+                                        <span class="text-gray-400">No badges yet</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Info -->
+            <div class="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Left Column -->
+                <div class="space-y-6">
+                    {% if profile_user.userprofile.bio %}
+                    <div>
+                        <h2 class="text-xl font-semibold text-white mb-2">About</h2>
+                        <p class="text-gray-300">{{ profile_user.userprofile.bio }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if profile_user.userprofile.interests %}
+                    <div>
+                        <h2 class="text-xl font-semibold text-white mb-2">Interests</h2>
+                        <div class="flex flex-wrap gap-2">
+                            {% for interest in profile_user.userprofile.interests.split %}
+                            <span class="px-3 py-1 bg-gray-700 rounded-full text-sm text-gray-300">{{ interest }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Right Column -->
+                <div class="space-y-4">
+                    {% if profile_user.userprofile.location %}
+                    <div class="flex items-center space-x-3 text-gray-300">
+                        <i class="fas fa-map-marker-alt w-5 text-gray-500"></i>
+                        <span>{{ profile_user.userprofile.location }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if profile_user.userprofile.website %}
+                    <div class="flex items-center space-x-3 text-gray-300">
+                        <i class="fas fa-globe w-5 text-gray-500"></i>
+                        <a href="{{ profile_user.userprofile.website }}" target="_blank" class="text-blue-400 hover:text-blue-300 hover:underline">{{ profile_user.userprofile.website }}</a>
+                    </div>
+                    {% endif %}
+
+                    {% if profile_user.email %}
+                    <div class="flex items-center space-x-3 text-gray-300">
+                        <i class="fas fa-envelope w-5 text-gray-500"></i>
+                        <span>{{ profile_user.email }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Recent Activities</h2>
+            <div class="space-y-4">
+                {% for activity in activities %}
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas 
+                            {% if activity.activity_type == 'post_created' %}fa-pen-to-square
+                            {% elif activity.activity_type == 'comment_added' %}fa-comment
+                            {% elif activity.activity_type == 'badge_earned' %}fa-award
+                            {% elif activity.activity_type == 'car_reviewed' %}fa-car
+                            {% elif activity.activity_type == 'started_watching' %}fa-user-plus
+                            {% endif %} text-gray-400"></i>
+                        <span class="text-gray-300">{{ activity.content }}</span>
+                    </div>
+                    {% if activity.url %}
+                    <a href="{{ activity.url }}" class="mt-2 text-sm text-blue-400 hover:text-blue-300 block">View details</a>
+                    {% endif %}
+                    <div class="mt-2 text-sm text-gray-500">{{ activity.created_at|timesince }} ago</div>
+                </div>
+                {% empty %}
+                <p class="text-gray-500">No recent activities</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Watched Users Activities -->
+        {% if user.is_authenticated and user == profile_user %}
+        <div class="mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Activity Feed from Watched Users</h2>
+            <div class="space-y-4">
+                {% for activity in watched_activities %}
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <div class="flex items-center space-x-2">
+                        <a href="{% url 'main:user_profile' activity.user.username %}" class="flex items-center space-x-2 text-blue-400 hover:text-blue-300">
+                            <span class="font-medium">{{ activity.user.username }}</span>
+                        </a>
+                        <i class="fas 
+                            {% if activity.activity_type == 'post_created' %}fa-pen-to-square
+                            {% elif activity.activity_type == 'comment_added' %}fa-comment
+                            {% elif activity.activity_type == 'badge_earned' %}fa-award
+                            {% elif activity.activity_type == 'car_reviewed' %}fa-car
+                            {% elif activity.activity_type == 'started_watching' %}fa-user-plus
+                            {% endif %} text-gray-400"></i>
+                        <span class="text-gray-300">{{ activity.content }}</span>
+                    </div>
+                    {% if activity.url %}
+                    <a href="{{ activity.url }}" class="mt-2 text-sm text-blue-400 hover:text-blue-300 block">View details</a>
+                    {% endif %}
+                    <div class="mt-2 text-sm text-gray-500">{{ activity.created_at|timesince }} ago</div>
+                </div>
+                {% empty %}
+                <p class="text-gray-500">No activities from watched users</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const watchBtn = document.getElementById('watch-btn');
+    if (watchBtn) {
+        watchBtn.addEventListener('click', function() {
+            const username = this.getAttribute('data-username');
+            fetch(`/user/${username}/toggle_watch/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'same-origin',
+            })
+            .then(response => response.json())
+            .then(data => {
+                const icon = watchBtn.querySelector('i');
+                const text = watchBtn.querySelector('span');
+                if (data.status === 'watched') {
+                    icon.classList.remove('fa-user-plus');
+                    icon.classList.add('fa-user-minus');
+                    text.textContent = 'Unwatch';
+                } else if (data.status === 'unwatched') {
+                    icon.classList.remove('fa-user-minus');
+                    icon.classList.add('fa-user-plus');
+                    text.textContent = 'Watch';
+                }
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

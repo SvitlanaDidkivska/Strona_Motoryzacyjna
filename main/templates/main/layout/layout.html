@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,40 +8,129 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block title %}Car Enthusiasts{% endblock %}</title>
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Animations -->
+    <link rel="stylesheet" href="{% static 'css/animations.css' %}">
     
     <style>
         body {
             font-family: 'Poppins', sans-serif;
         }
+        
+        /* Dark mode styles */
+        body.dark {
+            background-color: #1a202c;
+            color: #f7fafc;
+        }
+        
+        body.dark nav,
+        body.dark footer,
+        body.dark .bg-white,
+        body.dark #account-menu {
+            background-color: #2d3748;
+        }
+        
+        body.dark .text-gray-500,
+        body.dark .text-gray-600,
+        body.dark .text-gray-700,
+        body.dark .text-gray-800,
+        body.dark .text-gray-900 {
+            color: #e2e8f0;
+        }
+        
+        body.dark .hover\:text-gray-900:hover {
+            color: #f7fafc;
+        }
+        
+        body.dark .hover\:bg-gray-100:hover {
+            background-color: #4a5568;
+        }
+        
+        body.dark .border,
+        body.dark .ring-1 {
+            border-color: #4a5568;
+        }
+        
+        body.dark .shadow-lg {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Form elements in dark mode */
+        body.dark input,
+        body.dark textarea,
+        body.dark select {
+            background-color: #2d3748;
+            color: #f7fafc;
+            border-color: #4a5568;
+        }
+
+        body.dark input:focus,
+        body.dark textarea:focus,
+        body.dark select:focus {
+            border-color: #63b3ed;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+        }
+
+        /* TinyMCE editor in dark mode */
+        body.dark .tox-tinymce {
+            background-color: #2d3748 !important;
+            border-color: #4a5568 !important;
+        }
+
+        body.dark .tox .tox-edit-area__iframe {
+            background-color: #2d3748 !important;
+            color: #f7fafc !important;
+        }
+
+        body.dark .tox .tox-toolbar,
+        body.dark .tox .tox-toolbar__primary,
+        body.dark .tox .tox-toolbar__overflow {
+            background-color: #2d3748 !important;
+            border-color: #4a5568 !important;
+        }
+
+        body.dark .tox .tox-tbtn {
+            color: #f7fafc !important;
+        }
+
+        body.dark .tox .tox-tbtn:hover {
+            background-color: #4a5568 !important;
+        }
     </style>
 </head>
-<body class="bg-gray-100">
+<body class="dark bg-gray-900 text-white" id="body">
     <!-- Navigation -->
-    <nav class="bg-white shadow-lg">
+    <nav class="bg-gray-800 shadow-lg">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
                         <a href="{% url 'main:index' %}" class="text-2xl font-bold text-gray-800">CarHub</a>
                     </div>
-    <div class="hidden md:ml-6 md:flex md:space-x-8 w-full">
-        <a href="{% url 'main:index' %}" class="inline-flex items-center px-1 pt-1 text-gray-600 hover:text-gray-900">Home</a>
-        <a href="{% url 'main:cars' %}" class="inline-flex items-center px-1 pt-1 text-gray-600 hover:text-gray-900">Catalog</a>
-        <a href="{% url 'forum:index' %}" class="inline-flex items-center px-1 pt-1 text-gray-600 hover:text-gray-900">Forum</a>
+    <div class="hidden md:ml-6 md:flex md:space-x-8 w-full h-16 items-center">
+        <a href="{% url 'main:index' %}" class="inline-flex items-center px-1 text-gray-600 hover:text-gray-900">Home</a>
+        <a href="{% url 'main:cars' %}" class="inline-flex items-center px-1 text-gray-600 hover:text-gray-900">Catalog</a>
+        <a href="{% url 'forum:index' %}" class="inline-flex items-center px-1 text-gray-600 hover:text-gray-900">Forum</a>
     </div>
-    <div class="relative inline-block text-left ml-auto">
-        <button type="button" class="inline-flex items-center px-1 pt-1 text-gray-600 hover:text-gray-900 font-semibold" id="account-menu-button" aria-expanded="true" aria-haspopup="true">
-            <i class="fas fa-user-circle fa-lg mr-1"></i> Account
-            <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-        </button>
-        <div class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden z-50" id="account-menu" role="menu" aria-orientation="vertical" aria-labelledby="account-menu-button" tabindex="-1">
+                </div>
+    <div class="relative inline-block text-left ml-auto mr-4 flex items-center h-16">
+        <div class="relative">
+            <button type="button" class="inline-flex items-center px-1 text-gray-600 hover:text-gray-900 font-semibold" id="account-menu-button" aria-expanded="true" aria-haspopup="true">
+                <i class="fas fa-user-circle fa-lg mr-1"></i> Account
+                <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            <div class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden z-[100]" id="account-menu" role="menu" aria-orientation="vertical" aria-labelledby="account-menu-button" tabindex="-1">
             {% if user.is_authenticated %}
                 <a href="{% url 'main:account' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="account-menu-item-0">My Account</a>
                 <form method="post" action="{% url 'main:logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="account-menu-item-1">
@@ -67,6 +157,45 @@
                 }
             });
         });
+
+        // Dark mode toggle based on user preference
+        function applyLightMode(enabled) {
+            const body = document.getElementById('body');
+            const nav = document.querySelector('nav');
+            const footer = document.querySelector('footer');
+            const menu = document.getElementById('account-menu');
+            
+            if (enabled) {
+                // Light mode
+                body.classList.remove('dark', 'bg-gray-900', 'text-white');
+                body.classList.add('bg-gray-100', 'text-gray-900');
+                nav.classList.remove('bg-gray-800');
+                nav.classList.add('bg-white');
+                footer.classList.remove('bg-gray-800');
+                footer.classList.add('bg-white');
+                if (menu) {
+                    menu.classList.remove('bg-gray-800');
+                    menu.classList.add('bg-white');
+                }
+            } else {
+                // Dark mode (default)
+                body.classList.add('dark', 'bg-gray-900', 'text-white');
+                body.classList.remove('bg-gray-100', 'text-gray-900');
+                nav.classList.add('bg-gray-800');
+                nav.classList.remove('bg-white');
+                footer.classList.add('bg-gray-800');
+                footer.classList.remove('bg-white');
+                if (menu) {
+                    menu.classList.add('bg-gray-800');
+                    menu.classList.remove('bg-white');
+                }
+            }
+        }
+
+        // Always stay in dark mode
+        document.addEventListener('DOMContentLoaded', function() {
+            applyLightMode(false);
+        });
     </script>
 
                 </div>
@@ -81,9 +210,9 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white shadow-lg mt-12">
+    <footer class="bg-gray-800 shadow-lg mt-12">
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <div class="text-center text-gray-500">
+            <div class="text-center text-gray-400">
                 <p>&copy; 2024 CarHub. All rights reserved.</p>
             </div>
         </div>

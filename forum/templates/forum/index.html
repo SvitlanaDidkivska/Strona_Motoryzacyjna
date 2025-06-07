@@ -1,76 +1,149 @@
 {% extends 'main/layout/layout.html' %}
+{% load static %}
 
-{% block title %}CarHub - Forum{% endblock %}
+{% block title %}Forum{% endblock %}
 
 {% block content %}
-<div class="py-12 bg-gray-50">
+<div class="py-8 fade-in">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center">
-            <h2 class="text-3xl font-extrabold text-gray-900">Car Discussion Forum</h2>
+        <!-- Header Section -->
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-8 space-y-4 sm:space-y-0">
+            <div>
+                <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100">Forum</h1>
+                <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">Join the discussion
+            </div>
             {% if user.is_authenticated %}
-            <a href="{% url 'forum:add_post' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                <i class="fas fa-plus mr-2"></i> New Post
+            <a href="{% url 'forum:add_post' %}" class="btn-hover inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 transition-all">
+                <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                New Post
             </a>
             {% endif %}
         </div>
 
-        <!-- Categories -->
-        <div class="mt-8 bg-white shadow overflow-hidden sm:rounded-lg">
-            <div class="px-4 py-5 sm:px-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Categories</h3>
+        <!-- Search Form -->
+        <form method="get" action="{% url 'forum:index' %}" class="mb-6">
+            <label for="search" class="sr-only">Search posts</label>
+            <div class="relative max-w-md">
+                <input type="text" id="search" name="q" value="{{ query|default:'' }}" placeholder="Search posts..." class="block w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
+                    <i class="fas fa-search"></i>
+                </div>
             </div>
-            <div class="border-t border-gray-200">
-                <div class="divide-y divide-gray-200">
+        </form>
+
+        <!-- Categories Section -->
+        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg mb-8 overflow-hidden">
+            <div class="px-6 py-5">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">Categories</h2>
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {% for category in categories %}
-                    <div class="px-4 py-4 sm:px-6 hover:bg-gray-50">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h4 class="text-lg font-medium text-blue-600">{{ category.name }}</h4>
-                                <p class="mt-1 text-sm text-gray-500">{{ category.description }}</p>
-                            </div>
-                            <div class="text-sm text-gray-500">
+                    <a href="{% url 'forum:category_detail' category.id %}" class="hover-scale block p-6 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 transition-all">
+                        <h3 class="text-xl font-medium text-gray-900 dark:text-gray-100">{{ category.name }}</h3>
+                        <p class="mt-2 text-gray-600 dark:text-gray-400">{{ category.description|truncatechars:100 }}</p>
+                        <div class="mt-4 flex items-center text-sm text-gray-500 dark:text-gray-400">
+                            <span class="flex items-center">
+                                <i class="fas fa-comment-alt mr-2"></i>
                                 {{ category.posts.count }} posts
-                            </div>
+                            </span>
                         </div>
-                    </div>
+                    </a>
                     {% empty %}
-                    <div class="px-4 py-4 sm:px-6">
-                        <p class="text-gray-500">No categories yet.</p>
-                    </div>
+                    <p class="text-gray-500 dark:text-gray-400">No categories yet.</p>
                     {% endfor %}
                 </div>
+                {% if user.is_staff %}
+                <div class="mt-6">
+                    <a href="{% url 'forum:add_category' %}" class="btn-hover inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all">
+                        <i class="fas fa-plus mr-2"></i>
+                        Add Category
+                    </a>
+                </div>
+                {% endif %}
             </div>
         </div>
 
-        <!-- Recent Posts -->
-        <div class="mt-8 bg-white shadow overflow-hidden sm:rounded-lg">
-            <div class="px-4 py-5 sm:px-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Recent Discussions</h3>
-            </div>
-            <div class="border-t border-gray-200">
-                <div class="divide-y divide-gray-200">
-                    {% for post in recent_posts %}
-                    <div class="px-4 py-4 sm:px-6 hover:bg-gray-50">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h4 class="text-lg font-medium text-gray-900">{{ post.title }}</h4>
-                                <p class="mt-1 text-sm text-gray-500">
-                                    Posted by {{ post.author.username }} in {{ post.category.name }}
-                                </p>
+        <!-- Recent Posts Section -->
+        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg">
+            <div class="px-6 py-5">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">Recent Posts</h2>
+                <div class="space-y-6">
+                    {% for post in posts %}
+                    <div class="slide-in-right border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <a href="{% url 'forum:post_detail' post.id %}" class="text-xl font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+                                    {{ post.title }}
+                                </a>
+                                <p class="mt-2 text-gray-600 dark:text-gray-400">{{ post.content|truncatechars:200 }}</p>
+                                <div class="mt-3 flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-user mr-2"></i>
+                                        <a href="{% url 'main:user_profile' post.author.username %}" class="text-blue-600 dark:text-blue-400 hover:underline">
+                                            {{ post.author.username }}
+                                        </a>
+                                        {% if user.is_authenticated and user != post.author %}
+                                        <button class="ml-2 px-2 py-1 text-xs rounded bg-blue-600 text-white hover:bg-blue-700 transition watch-btn" data-username="{{ post.author.username }}">
+                                            Watch
+                                        </button>
+                                        {% endif %}
+                                    </span>
+                                    <span class="flex items-center">
+                                        <i class="fas fa-calendar mr-2"></i>
+                                        {{ post.created_at|date:"M d, Y" }}
+                                    </span>
+                                    {% if post.category %}
+                                    <a href="{% url 'forum:category_detail' post.category.id %}" class="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+                                        <i class="fas fa-folder mr-2"></i>
+                                        {{ post.category.name }}
+                                    </a>
+                                    {% endif %}
+                                    <span class="flex items-center">
+                                        <i class="fas fa-comments mr-2"></i>
+                                        {{ post.comments.count }} comments
+                                    </span>
+                                </div>
                             </div>
-                            <div class="text-sm text-gray-500">
-                                <i class="fas fa-comments mr-1"></i> {{ post.comments.count }} comments
-                                <br>
-                                <span class="text-xs">{{ post.created_at|timesince }} ago</span>
+                            {% if user == post.author %}
+                            <div class="flex space-x-2 ml-4">
+                                <a href="{% url 'forum:edit_post' post.id %}" class="text-gray-400 hover:text-blue-500 transition-colors">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'forum:delete_post' post.id %}" class="text-gray-400 hover:text-red-500 transition-colors">
+                                    <i class="fas fa-trash"></i>
+                                </a>
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                     {% empty %}
-                    <div class="px-4 py-4 sm:px-6">
-                        <p class="text-gray-500">No discussions yet. Be the first to start one!</p>
-                    </div>
+                    <p class="text-gray-500 dark:text-gray-400">No posts yet.</p>
                     {% endfor %}
                 </div>
+
+                <!-- Pagination -->
+                {% if posts.has_other_pages %}
+                <div class="mt-8 flex justify-center">
+                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                        {% if posts.has_previous %}
+                        <a href="?page={{ posts.previous_page_number }}" class="btn-hover relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            Previous
+                        </a>
+                        {% endif %}
+                        
+                        <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Page {{ posts.number }} of {{ posts.paginator.num_pages }}
+                        </span>
+
+                        {% if posts.has_next %}
+                        <a href="?page={{ posts.next_page_number }}" class="btn-hover relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            Next
+                        </a>
+                        {% endif %}
+                    </nav>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>

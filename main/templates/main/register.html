@@ -3,15 +3,38 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
-    <h2 class="text-2xl font-bold mb-6 text-center">Create an Account</h2>
+{% load widget_tweaks %}
+<div class="max-w-md mx-auto mt-10 p-6 bg-gray-700 rounded shadow">
+    <h2 class="text-2xl font-bold mb-6 text-center text-white">Create an Account</h2>
     <form method="post" novalidate>
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Register</button>
+        <div class="space-y-4">
+            <div>
+                <label for="id_username" class="block text-sm font-medium text-gray-300">Username</label>
+                {% render_field form.username class="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500" %}
+                {% if form.username.errors %}
+                    <p class="mt-1 text-sm text-red-400">{{ form.username.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label for="id_password1" class="block text-sm font-medium text-gray-300">Password</label>
+                {% render_field form.password1 class="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500" %}
+                {% if form.password1.errors %}
+                    <p class="mt-1 text-sm text-red-400">{{ form.password1.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label for="id_password2" class="block text-sm font-medium text-gray-300">Confirm Password</label>
+                {% render_field form.password2 class="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500" %}
+                {% if form.password2.errors %}
+                    <p class="mt-1 text-sm text-red-400">{{ form.password2.errors.0 }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition mt-6">Register</button>
     </form>
-    <p class="mt-4 text-center text-sm text-gray-600">
-        Already have an account? <a href="{% url 'main:login' %}" class="text-blue-600 hover:underline">Log in</a>
+    <p class="mt-4 text-center text-sm text-gray-300">
+        Already have an account? <a href="{% url 'main:login' %}" class="text-blue-400 hover:underline">Log in</a>
     </p>
 </div>
 {% endblock %}
