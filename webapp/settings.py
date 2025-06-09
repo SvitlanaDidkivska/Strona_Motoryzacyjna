@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-jnscosjmvqy4^59lzts0s_yct#b8@9_ex)%08%6v_%ek#hm3ry
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True #show errors during program usage
 
-ALLOWED_HOSTS = ['*', 'localhost', '0.0.0.0']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -38,11 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.humanize',
-
-    # third party apps
-    'tinymce',
-    'widget_tweaks',
 
     # custom apps
     'main',
@@ -78,7 +73,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'webapp.wsgi.application'
+WSGI_APPLICATION = 'webapp.wsgi.application' #created as an implementation-neutral interface between web servers and web applications or frameworks to promote common ground for portable web application development
+
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -137,41 +133,3 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Authentication settings
-LOGIN_REDIRECT_URL = '/'
-LOGIN_URL = 'main:login'
-
-# TinyMCE Configuration
-TINYMCE_DEFAULT_CONFIG = {
-    'height': 360,
-    'width': 'auto',
-    'cleanup_on_startup': True,
-    'custom_undo_redo_levels': 20,
-    'selector': 'textarea',
-    'theme': 'silver',
-    'skin': 'oxide-dark',
-    'content_css': 'dark',
-    'plugins': '''
-        mentions autoresize autolink lists link image charmap print preview anchor
-        searchreplace visualblocks code fullscreen insertdatetime media table
-        paste code help wordcount spellchecker
-    ''',
-    'toolbar1': '''
-        undo redo | formatselect | bold italic underline strikethrough | alignleft aligncenter
-        alignright alignjustify | bullist numlist outdent indent | link image media | removeformat | help
-    ''',
-    'mentions': {
-        'delimiter': ['@'],
-        'source': '/forum/api/users/'
-    },
-    'menubar': False,
-    'statusbar': True,
-    'spellchecker_dialog': True,
-    'images_upload_url': '/forum/comment/image_upload/',
-    'content_style': '''
-        body { background-color: #2d3748; color: #f7fafc; }
-        p { color: #f7fafc; }
-        a { color: #63b3ed; }
-    '''
-}
